@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Check JBoss Service Exits
+    become: true
+    stat:
+      path: "{{ '/etc/init.d/' + jboss_service_name }}"
+    register: jboss_service_exists
+  - name: Stop JBoss Service
+    sysvinit:
+       name: "{{ jboss_service_name }}"
+       state: stopped
+    when: jboss_service_exists.stat.exists 
+

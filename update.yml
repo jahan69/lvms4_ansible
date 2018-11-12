@@ -1,0 +1,88 @@
+---
+- hosts: all
+  tasks:
+  - name: Check Start All flag
+    set_fact: 
+      jboss_start_all: "{{ start_all |bool if start_all is defined else false }}"
+
+  - name: Check Master node
+    set_fact: 
+      master_node: "{{ inventory_hostname == groups[['master'][0]] }}"  
+  
+  - name: Check JBoss Service Exits
+    become: true
+    stat:
+      path: "{{ '/etc/init.d/' + jboss_service_name }}"
+    register: check_jboss_service
+    tags:
+    - jboss_stop
+    - jboss_start
+  
+  - name: Stop JBoss Service
+    become: true
+    sysvinit:
+       name: "{{ jboss_service_name }}"
+       state: stopped
+    tags:
+    - jboss_stop
+    when: check_jboss_service.stat.exists 
+
+  - name: Backup EAR
+    fetch:
+      src: "{{ jboss_deployment_dir }}/clims.ear"
+      dest: "{{ jboss_backup_dir }}/{{ inventory_hostname }}/"
+      flat: yes
+    tags:
+    - deploy_ear
+  
+  - name: Deploy EAR
+    become: true
+    copy:
+      dest: "{{ jboss_deployment_dir }}/"
+      src: "{{ local_pckage_dir }}/clims.ear"
+      owner: jboss
+      group: jboss
+    tags:
+    - deploy_ear
+  
+  - name: Deploy MED Component
+    become: true
+    copy:
+      dest: "{{ labvantage_home_dir }}/"
+      src: "{{ item }}"
+      owner: jboss
+      group: jboss
+    with_fileglob:
+         -  "{{ local_pckage_dir }}/MED*zip"
+    when: master_node
+    tags:
+    - deploy_ear
+
+  - name: JBoss to start
+    debug:
+      msg: "Jboss will be started in host: {{inventory_hostname}}"
+    when: master_node|bool or jboss_start_all|bool
+
+  - name: Start JBoss Service
+    become: true
+    sysvinit:
+      name: "{{ jboss_service_name }}"
+      state: started
+    tags:
+    - jboss_start
+    when: check_jboss_service.stat.exists and (master_node|bool or jboss_start_all|bool)
+    register: jboss_started
+
+  - name: Verify JBoss is running
+    wait_for: port="{{ jboss_http_port }}" host="{{ inventory_hostname }}" timeout=120
+    tags:
+    - jboss_start
+    when: jboss_started is changed
+    notify: Check JBoss is available
+
+  - name: Check JBoss is available
+    uri:
+      url: "http://{{ inventory_hostname }}:{{ jboss_http_port }}"
+    tags:
+    - jboss_start
+    when: jboss_started is changed 

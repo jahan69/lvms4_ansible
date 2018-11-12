@@ -1,0 +1,15 @@
+---
+-  hosts: all
+   tasks:
+   -  name: Find  files to fetch
+      find:
+         paths: "{{ jboss_log_dir }}"
+         age:   "{{ get_log_age }}"
+         patterns: "{{ get_log_pattern }}"
+      register: found_logs
+   -  name: Fetch labvantage log files
+      fetch:
+         src: "{{ item.path }}"
+         dest: "{{local_log_dir}}/{{ inventory_hostname }}/"
+         flat: yes
+      with_items: "{{ found_logs.files }}" 

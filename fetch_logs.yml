@@ -1,0 +1,11 @@
+---
+-  hosts: all
+   tasks:
+   -  name: Fetch labvantage log files
+      fetch:
+         src: "{{ item }}"
+         dest: "{{local_log_dir}}/{{ inventory_hostname }}/"
+         flat: yes
+      with_fileglob:
+         -  "{{jboss_log_dir}}/*labvantage*log*"
+          

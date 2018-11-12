@@ -1,0 +1,10 @@
+no2516clust-01
+no2516clust-02
+
+[master]
+no2516clust-01
+
+
+[slave]
+no2516clust-02
+

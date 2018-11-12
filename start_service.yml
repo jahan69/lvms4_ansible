@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Check JBoss Service Exits
+    become: true
+    stat:
+      path: "{{ '/etc/init.d/' + jboss_service_name }}"
+    register: jboss_service_exists
+
+  - name: Start JBoss Service
+    sysvinit:
+      name: "{{ jboss_service_name }}"
+      state: started
+    register: jboss_started
+    when: jboss_service_exists.stat.exists
+
+  - name: Verify JBoss is running
+    wait_for: port="{{ jboss_http_port }}" host="{{ inventory_hostname }}" timeout=120
+    when: jboss_started|changed
+    notify: Check JBoss is available
+
+  - name: Check JBoss is available
+    uri:
+      url: "http://{{ inventory_hostname }}:{{ jboss_http_port }}"
+    when: jboss_started|changed 
