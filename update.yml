@@ -1,10 +1,5 @@
 ---
-- hosts: all
-  tasks:
-  - name: Check Start All flag
-    set_fact: 
-      jboss_start_all: "{{ start_all |bool if start_all is defined else false }}"
-
+- tasks:
   - name: Check Master node
     set_fact: 
       master_node: "{{ inventory_hostname == groups[['master'][0]] }}"  
@@ -30,7 +25,7 @@
   - name: Backup EAR
     fetch:
       src: "{{ jboss_deployment_dir }}/clims.ear"
-      dest: "{{ jboss_backup_dir }}/{{ inventory_hostname }}/"
+      dest: "{{ jboss_backup_dir }}/ear/{{ inventory_hostname }}/"
       flat: yes
     tags:
     - deploy_ear
@@ -86,3 +81,4 @@
     tags:
     - jboss_start
     when: jboss_started is changed 
+...

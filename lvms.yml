@@ -1,0 +1,51 @@
+---
+- name: Playbook for Installing, Updating, Fetching Logs, Starting and Stopping LVMS
+  hosts: all
+  vars_files:
+    - vars/lvms.yml
+  tasks:
+  - name: Check Install flag
+    set_fact: 
+      lvms_install: "{{ install |bool if install is defined else false }}"
+
+  - name: Check Update flag
+    set_fact: 
+      lvms_update: "{{ update|bool if update is defined else false }}"
+
+  - name: Check Start All flag
+    set_fact: 
+      lvms_start_all: "{{ start_all |bool if start_all is defined else false }}"
+
+  - name: Check Stop All flag
+    set_fact: 
+      lvms_stop_all: "{{ stop_all |bool if stop_all is defined else false }}"
+
+  - name: Check Get Logs flag
+    set_fact: 
+      lvms_get_logs: "{{ get_logs |bool if get_logs is defined else false }}"
+  
+  - debug:
+      msg: "Installing LVMS"
+    import_tasks: install.yml
+    when: lvmas_install|bool
+
+  - debug:
+      msg: "Updating LVMS"
+    import_tasks: update.yml
+    when: lvms_update|bool
+
+  - debug:
+      msg: "Startinging LVMS"
+    import_tasks: start_all.yml
+    when: lvmas_start_all|bool
+
+  - debug:
+      msg: "Stoppinging LVMS"
+    import_tasks: stop_all.yml
+    when: lvmas_stop_all|bool    
+  
+  - debug:
+      msg: "Fetching LVMS logs"
+    import_tasks: get_logs.yml
+    when: lvmas_get_logs|bool
+...    

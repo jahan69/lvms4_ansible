@@ -1,11 +1,6 @@
-jboss_backup_dir: /root/backup
-jboss_service_name: jboss6eap-clims-test.sh
-jboss_deployment_dir: /opt/wsp/jboss-eap-6.4.0/standalone-test/deployments
-jboss_http_port: 8080
-jboss_log_dir: /var/opt/logs/jboss6eap-clims-test
-labvantage_home_dir: /opt/wsp/lvhome83
+local_pckage_dir: /root/update
+lvms_backup_dir: /root/backup
 med_component_file: "MED*.zip"
-local_pckage_dir: /root/update-20181112
-local_log_dir: /root/logs
 get_log_age: 7d
 get_log_pattern: "*labvantage*log*"
+

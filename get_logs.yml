@@ -1,6 +1,5 @@
 ---
--  hosts: all
-   tasks:
+- tasks:
    -  name: Find  files to fetch
       find:
          paths: "{{ jboss_log_dir }}"
@@ -10,6 +9,7 @@
    -  name: Fetch labvantage log files
       fetch:
          src: "{{ item.path }}"
-         dest: "{{local_log_dir}}/{{ inventory_hostname }}/"
+         dest: "{{ local_backup_dir }}/logs/{{ inventory_hostname }}/"
          flat: yes
       with_items: "{{ found_logs.files }}" 
+...

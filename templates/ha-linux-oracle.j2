@@ -1,0 +1,36 @@
+# $Id$
+#LVMS installation directory
+lvms.install.home={{lvms_install_dir}}
+
+# JDK, JBoss, LabVantage and clims version
+jdk.profile=jdk8.properties
+labvantage.profile=labvantage-8.3.properties
+jboss.profile=jboss-6.4.0.properties
+clims.profile=clims-4.1.properties
+jdbc.profile=oracle.properties
+
+# JBoss node settings
+jboss.node.type=cluster
+# Possible node name could be prod, dev, test or pl, mb etc
+jboss.node.name={{jboss_node_postfix}}
+# To differentiate differnt nodes in a cluster. For subsequent nodes increament it by 1
+jboss.node.id={{jboss_node_id}}
+# Recommend to use hostname instead of IP. Also check that hostname is put into /etc/host file
+jboss.node.ip.public={{inventory_hostname}}
+
+# LabVantage admindb
+labvantage.admindbms=ORA
+labvantage.admindb.pool.name=admindb
+labvantage.admindb.jdbc.url=jdbc:oracle:thin:@{{lbvantage_db_server}}:1521:{{lbvantage_db_sid}}
+labvantage.admindb.user.name={{labvantage_db_user_name}}
+labvantage.admindb.user.password={{labvantage_db_user_password}}
+labvantage.admindb.pool.size.min=1
+labvantage.admindb.pool.size.max=30
+
+# Clims database JNID name
+labvantage.maindb.pool.name={{labvantage_pool_nam}}
+labvantage.maindb.jdbc.url=jdbc:oracle:thin:@{{lbvantage_db_server}}:1521:{{lbvantage_db_sid}}
+labvantage.maindb.user.name={{labvantage_db_user_name}}
+labvantage.maindb.user.password={{labvantage_db_user_password}}
+labvantage.maindb.pool.size.min=10
+labvantage.maindb.pool.size.max=300

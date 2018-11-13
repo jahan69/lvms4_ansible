@@ -1,0 +1,45 @@
+lvms_install_dir: /opt/wsp
+
+# JDK, JBoss, LabVantage and clims version
+#jdk_profile=jdk8.properties
+#labvantage_profile=labvantage-8.3.properties
+#jboss_profile=jboss-6.4.0.properties
+#clims_profile=clims-4.1.properties
+#jdbc_profile=oracle.properties
+
+# JBoss node settings
+#jboss_node_type=cluster
+# Possible node name could be prod, dev, test or pl, mb etc
+jboss_node_name: test
+# To differentiate differnt nodes in a cluster. For subsequent nodes increament it by 1
+#jboss_node_id=1
+# Recommend to use hostname instead of IP. Also check that hostname is put into /etc/host file
+#jboss.node.ip.public=no2516lv8-1.sbab.dns
+
+labvantage_db_server: oracle11.sbab.dns
+labvantage_db_sid: o11r2utf
+# LabVantage admindb
+#labvantage.admindbms=ORA
+#labvantage.admindb.pool.name=admindb
+#labvantage.admindb.jdbc.url=jdbc:oracle:thin:@oracle11.sbab.dns:1521:o11r2utf
+labvantage_admindb_user_name: admindbtest_v8ts
+labvantage_admindb_user_assword: admindbtest_v8ts
+#labvantage.admindb.pool.size.min=1
+#labvantage.admindb.pool.size.max=30
+
+# Clims database JNID name
+labvantage_pool_name: labvantage
+#labvantage.maindb.jdbc.url=jdbc:oracle:thin:@oracle12c.sbab.dns:1521:oracle12c
+labvantage_db_user_name: NO2516_deperson
+labvantage_maindb_user_password: NO2516_deperson
+#labvantage.maindb.pool.size.min=10
+#labvantage.maindb.pool.size.max=300
+
+jboss_service_name: jboss6eap-clims-{{jboss_node_name}}.sh
+jboss_deployment_dir: "{{ lvms_install_dir }}/jboss-eap-6.4.0/standalone-{{jboss_node_name}}/deployments"
+jboss_http_port: 8080
+jboss_log_dir: /var/opt/logs/jboss6eap-clims-{{jboss_node_name}}
+labvantage_home_dir: "{{ lvms_install_dir }}/lvhome83"
+
+lvms_package_file: "lvms41-linux-oracle.zip"
+temp_jdk_pkg: "jdk-7u75-linux-x64.tar.gz"

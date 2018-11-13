@@ -1,0 +1,64 @@
+---
+- tasks:
+  - name: Check LVMS Install package
+    become: true
+    stat:
+      path: "{{ local_package_dir }}/lvms_package_file }}"
+    register: check_lvms_package
+
+  - name: Check JBoss Service Exits
+    become: true
+    stat:
+      path: "{{ '/etc/init.d/' + jboss_service_name }}"
+    register: check_jboss_service
+  
+  - name: Check Java Installed
+    become: true
+    find:
+      path: /
+      pattern: 'java'
+    register: find_java_installed
+
+  - name: No java found 
+    debug:
+      msg: "Installing java temporarily"
+    when: find_java_installed.matched| int < 1
+
+  - name: Install Temporary Java
+    become: true
+    unarchive:
+      path: "{{ lvms_install_dir }}/"
+      src: "{{ local_package_dir }}/{{temp_jdk_pkg}}"
+      remote_src: yes
+      mode: '0755'
+    register: install_temp_java
+    when: find_java_installed.matched| int > 0  
+
+  - name: Uncompress LVMS Install package
+    become: true
+    unarchive:
+      dest: "{{ lvms_install_dir }}/"
+      src: "{{ lvms_package_file }}"
+      remote_src: yes
+      mode: '0755'
+    register: uncompress_lvms_package
+
+  - name: Copy LVMS Profile
+    become: true
+    template:
+      dest: "{{ lvms_install_dir }}/{{ lvms_profile_file }}|splittext)[0] + '.properties'"
+      src: "{{ local_package_dir }}/{{ lvms_profile_file }}"
+      remote_src: yes
+      mode: '0755'
+    register: copy_lvms_profile
+
+  - name: Run LVMS installer
+    become: true
+    shell: "install_lvms.sh -profile {{ lvms_profile_file }}|splittext)[0] + '.properties'" 
+    args:
+      chdir: "{{ lvms_install_dir }}/{{ lvms_package_file }}|basename"
+      executable: /bin/bash
+    register: install_lvms_package 
+...  
+    
+    
